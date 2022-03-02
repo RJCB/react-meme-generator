@@ -57,3 +57,26 @@ button{
   max-width: 800px;
   max-height: 800px;
 }
+
+.meme-section {
+  position: relative;
+}
+
+.top-header-text {
+  position: absolute;
+  top: 0;
+}
+
+.bottom-header-text {
+  position: absolute;
+  bottom: 50px;
+}
+h2 {
+  left: 50%;
+  transform: translateX(-50%);
+  text-align: center;
+  margin: 20px 0;
+  color: #fff;
+  text-transform: uppercase;
+  font-size: 32px;
+}

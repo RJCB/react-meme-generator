@@ -1,37 +1,65 @@
-import React, { useState } from "react";
-let fetchedImages;
+import React, { useState, useEffect } from "react";
+// let fetchedMemes;
 
 const Meme = () => {
     const [meme, setMemeImage] = useState({});
-    const fetchMemeImages = async () => {
-        if (!fetchedImages) {
+    const [{ topText, bottomText }, setInputValues] = useState({ topText: "", bottomText: "" });
+    const [fetchedMemes, setFetchedMemes] = useState([]);
+    // const fetchMemeImages = async () => {
+    //     if (!fetchedMemes) {
+    //         try {
+    //             const fetchImages = await fetch('https://api.imgflip.com/get_memes');
+    //             const images = await fetchImages.json();
+    //             fetchedMemes = images.data;
+    //             getMemeImage();
+    //         } catch (err) {
+    //             return err;
+    //         }
+    //     } else {
+    //         getMemeImage();
+    //     }
+    // }
+
+    useEffect(() => {
+        const fetchMemeImages = async () => {
             try {
                 const fetchImages = await fetch('https://api.imgflip.com/get_memes');
-                const images = await fetchImages.json();
-                fetchedImages = images.data;
-                getMemeImage();
+                const data = await fetchImages.json();
+                setFetchedMemes(data.data.memes);
             } catch (err) {
                 return err;
             }
-        } else {
-            getMemeImage();
         }
-    }
+        fetchMemeImages();
+    }, [])
+
     const getMemeImage = () => {
-        if (fetchedImages) {
-            const memes = fetchedImages.memes;
+        const memes = fetchedMemes;
+        if (memes.length > 0) {
             const randomMeme = memes[Math.floor(Math.random() * memes.length)];
             setMemeImage(randomMeme);
         }
     }
+    const handleChange = (event) => {
+        const { name, value } = event.target;
+        setInputValues(prevValues => {
+            return { ...prevValues, [name]: value }
+        })
+    }
     return (
         <main>
             <div className="form">
-                <input type="text" name="text-1" id="text-1" className="text-1" placeholder="Top text" />
-                <input type="text" name="text-2" id="text-2" className="text-2" placeholder="Bottom text" />
-                <button onClick={fetchMemeImages}>Get a new meme image</button>
+                <input type="text" name="topText" id="topText" value={topText} className="top-text" onChange={handleChange} placeholder="Top text" />
+                <input type="text" name="bottomText" id="bottomText" value={bottomText} className="bottom-text" onChange={handleChange} placeholder="Bottom text" />
+                <button onClick={getMemeImage}>Get a new meme image</button>
             </div>
-            <img src={meme.url} alt={meme.name} className="meme-image" />
+            {meme.url &&
+                <div className="meme-section">
+                    <img src={meme.url} alt={meme.name} className="meme-image" />
+                    <h2 className="top-header-text">{topText}</h2>
+                    <h2 className="bottom-header-text">{bottomText}</h2>
+                </div>
+            }
         </main>
     )
 }
